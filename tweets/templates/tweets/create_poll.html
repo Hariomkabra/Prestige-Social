@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Create Poll{% endblock %}
+{% block content %}
+    <div class="content-section" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Create Poll</h2>
+            <span class="premium-badge">Elite</span>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Post Content</h5>
+                    <div class="form-group mb-3">
+                        {{ tweet_form.content }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ tweet_form.image.id_for_label }}" class="form-label">Add Image (optional)</label>
+                        {{ tweet_form.image }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Poll Question</h5>
+                    <div class="form-group mb-3">
+                        {{ poll_form.question }}
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="{{ poll_form.duration.id_for_label }}" class="form-label">Poll Duration</label>
+                        {{ poll_form.duration }}
+                    </div>
+                    
+                    <h5 class="card-title mt-4 mb-3">Poll Options</h5>
+                    {{ option_formset.management_form }}
+                    
+                    <div id="poll-options">
+                        {% for form in option_formset %}
+                            <div class="form-group mb-3 poll-option">
+                                <div class="input-group">
+                                    {{ form.text }}
+                                    {% if forloop.counter > 2 %}
+                                        <button type="button" class="btn btn-outline-danger remove-option">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-option" class="btn btn-outline-primary mt-2" {% if option_formset.total_form_count == 4 %}disabled{% endif %}>
+                        <i class="fas fa-plus me-2"></i> Add Option
+                    </button>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-twitter">
+                    <i class="fas fa-poll me-2"></i> Create Poll
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        const maxOptions = 4;
+        const minOptions = 2;
+        const totalForms = $('#id_options-TOTAL_FORMS');
+        const optionsContainer = $('#poll-options');
+        
+        // Add option button
+        $('#add-option').click(function() {
+            const formCount = parseInt(totalForms.val());
+            
+            if (formCount < maxOptions) {
+                // Clone the last form
+                const newForm = $('.poll-option:last').clone(true);
+                
+                // Update form index
+                newForm.find(':input').each(function() {
+                    const name = $(this).attr('name').replace('-' + (formCount-1) + '-', '-' + formCount + '-');
+                    const id = 'id_' + name;
+                    $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+                });
+                
+                // Add remove button if not present
+                if (newForm.find('.remove-option').length === 0) {
+                    newForm.find('.input-group').append(
+                        '<button type="button" class="btn btn-outline-danger remove-option"><i class="fas fa-times"></i></button>'
+                    );
+                }
+                
+                // Add the new form
+                optionsContainer.append(newForm);
+                totalForms.val(formCount + 1);
+                
+                // Disable add button if max reached
+                if (formCount + 1 >= maxOptions) {
+                    $('#add-option').prop('disabled', true);
+                }
+            }
+        });
+        
+        // Remove option button
+        $(document).on('click', '.remove-option', function() {
+            const formCount = parseInt(totalForms.val());
+            
+            if (formCount > minOptions) {
+                $(this).closest('.poll-option').remove();
+                
+                // Update form indices for all forms after the removed one
+                $('.poll-option').each(function(i) {
+                    $(this).find(':input').each(function() {
+                        const name = $(this).attr('name').replace(/-\d+-/, '-' + i + '-');
+                        const id = 'id_' + name;
+                        $(this).attr({'name': name, 'id': id});
+                    });
+                });
+                
+                totalForms.val(formCount - 1);
+                
+                // Enable add button if below max
+                $('#add-option').prop('disabled', false);
+            }
+        });
+    });
+</script>
+{% endblock %}

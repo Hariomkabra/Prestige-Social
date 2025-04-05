@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.id %}Edit Tweet{% else %}New Tweet{% endif %}{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">
+                    {% if form.instance.id %}Edit Tweet{% else %}New Tweet{% endif %}
+                </legend>
+                <div class="form-group">
+                    {{ form.content }}
+                </div>
+                <div class="form-group mt-2">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">Image (optional)</label>
+                    {{ form.image }}
+                    {% if form.instance.image %}
+                        <div class="mt-2">
+                            <p>Current image:</p>
+                            <img src="{{ form.instance.image.url }}" alt="Current tweet image" class="img-fluid rounded" style="max-height: 200px;">
+                        </div>
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-twitter">
+                    {% if form.instance.id %}Update{% else %}Tweet{% endif %}
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

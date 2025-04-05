@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}{{ user_profile.username }}'s Profile{% endblock %}
+{% block content %}
+    <div class="content-section p-0" data-aos="fade-up">
+        <div class="position-relative">
+            <div class="position-absolute w-100" style="height: 200px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); top: 0; left: 0; z-index: -1; border-radius: 12px 12px 0 0;"></div>
+
+            <div class="profile-header position-relative pt-5">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="position-relative d-inline-block" data-aos="zoom-in" data-aos-delay="200">
+                            <img class="rounded-circle img-fluid border border-4 border-white shadow" src="{{ user_profile.profile.profile_image.url }}" alt="{{ user_profile.username }}'s profile picture" style="width: 180px; height: 180px; object-fit: cover;">
+                            <span class="premium-badge position-absolute" style="bottom: 10px; right: 10px; transform: scale(1.2);">Elite</span>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="d-flex align-items-center mb-2">
+                            <h1 class="mb-0 fw-bold">{{ user_profile.username }}</h1>
+                            <span class="premium-badge ms-2">Elite</span>
+                            <div class="ms-auto">
+                                {% if user.is_authenticated and user != user_profile %}
+                                    <form action="{% url 'follow-user' username=user_profile.username %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        {% if is_following %}
+                                            <button type="submit" class="btn btn-outline-light">Unfollow</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-light">Follow</button>
+                                        {% endif %}
+                                    </form>
+                                    <button class="btn btn-light ms-2"><i class="fas fa-envelope"></i> Message</button>
+                                {% elif user == user_profile %}
+                                    <a href="{% url 'edit-profile' %}" class="btn btn-outline-light"><i class="fas fa-edit me-2"></i>Edit Profile</a>
+                                    <button class="btn btn-light ms-2"><i class="fas fa-cog"></i> Settings</button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <p class="lead mb-1">{{ user_profile.profile.bio }}</p>
+
+                        <div class="d-flex flex-wrap mt-3 mb-3">
+                            {% if user_profile.profile.location %}
+                            <div class="me-4">
+                                <i class="fas fa-map-marker-alt text-light"></i>
+                                <span class="text-light">{{ user_profile.profile.location }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if user_profile.profile.birth_date %}
+                            <div class="me-4">
+                                <i class="fas fa-birthday-cake text-light"></i>
+                                <span class="text-light">Born {{ user_profile.profile.birth_date|date:"F d, Y" }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="me-4">
+                                <i class="fas fa-calendar-alt text-light"></i>
+                                <span class="text-light">Joined {{ user_profile.date_joined|date:"F Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                            <div class="me-4 text-center">
+                                <h3 class="mb-0 fw-bold">{{ followers_count }}</h3>
+                                <a href="{% url 'followers' username=user_profile.username %}" class="text-white text-decoration-none">
+                                    Followers
+                                </a>
+                            </div>
+                            <div class="me-4 text-center">
+                                <h3 class="mb-0 fw-bold">{{ following_count }}</h3>
+                                <a href="{% url 'following' username=user_profile.username %}" class="text-white text-decoration-none">
+                                    Following
+                                </a>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="mb-0 fw-bold">{{ tweets|length }}</h3>
+                                <span class="text-white">Posts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="profile-info">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0">Posts</h3>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active">All</button>
+                    <button type="button" class="btn btn-outline-primary">Media</button>
+                    <button type="button" class="btn btn-outline-primary">Likes</button>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-primary mb-2">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h5 class="card-title">Engagement Rate</h5>
+                            <h2 class="card-text text-primary">24.8%</h2>
+                            <p class="card-text text-success"><i class="fas fa-arrow-up"></i> 3.2% from last week</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-warning mb-2">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h5 class="card-title">Profile Views</h5>
+                            <h2 class="card-text text-warning">12.4K</h2>
+                            <p class="card-text text-success"><i class="fas fa-arrow-up"></i> 8.7% from last week</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="display-4 text-success mb-2">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h5 class="card-title">New Followers</h5>
+                            <h2 class="card-text text-success">342</h2>
+                            <p class="card-text text-success"><i class="fas fa-arrow-up"></i> 12.5% from last week</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if tweets %}
+                {% for tweet in tweets %}
+                    <div class="tweet-container" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"50"|stringformat:"d" }}">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <img src="{{ tweet.author.profile.profile_image.url }}" alt="{{ tweet.author.username }}" class="profile-img">
+                                {% if forloop.counter|divisibleby:3 %}
+                                <span class="premium-badge d-block mt-2 text-center">Elite</span>
+                                {% endif %}
+                            </div>
+                            <div class="w-100">
+                                <div class="d-flex align-items-center">
+                                    <h5 class="mb-0 fw-bold">{{ tweet.author.username }}</h5>
+                                    <small class="text-muted ms-2">{{ tweet.date_posted|date:"F d, Y" }}</small>
+                                    <div class="dropdown ms-auto">
+                                        <button class="btn btn-sm" type="button" id="dropdownMenuButton{{ tweet.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ tweet.id }}">
+                                            <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i> Save post</a></li>
+                                            {% if user == tweet.author %}
+                                                <li><a class="dropdown-item" href="{% url 'tweet-update' tweet.id %}"><i class="far fa-edit me-2"></i> Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="{% url 'tweet-delete' tweet.id %}"><i class="far fa-trash-alt me-2"></i> Delete</a></li>
+                                            {% else %}
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i> Follow user</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-volume-mute me-2"></i> Mute user</a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="mt-2">{{ tweet.content }}</p>
+                                {% if tweet.image %}
+                                    <div class="position-relative mb-3">
+                                        <img src="{{ tweet.image.url }}" alt="Tweet image" class="img-fluid rounded">
+                                        {% if forloop.counter|divisibleby:2 %}
+                                        <div class="position-absolute bottom-0 end-0 m-3">
+                                            <span class="badge bg-dark bg-opacity-75 p-2">
+                                                <i class="fas fa-camera me-1"></i> Premium Quality
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="tweet-actions">
+                                        <a href="{% url 'tweet-like' tweet.id %}" class="{% if user in tweet.likes.all %}liked{% endif %}">
+                                            <i class="{% if user in tweet.likes.all %}fas{% else %}far{% endif %} fa-heart"></i> {{ tweet.likes.count }}
+                                        </a>
+                                        <a href="{% url 'retweet' tweet.id %}" class="">
+                                            <i class="fas fa-retweet"></i> {{ tweet.retweets.count }}
+                                        </a>
+                                        <a href="{% url 'tweet-detail' tweet.id %}">
+                                            <i class="far fa-comment"></i> {{ tweet.comments.count }}
+                                        </a>
+                                        <a href="#" class="">
+                                            <i class="far fa-paper-plane"></i> Share
+                                        </a>
+                                    </div>
+                                    {% if forloop.counter|divisibleby:3 %}
+                                    <div>
+                                        <span class="badge bg-light text-dark p-2">
+                                            <i class="fas fa-chart-line text-success me-1"></i> Trending
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No posts yet.
+                    {% if user == user_profile %}
+                        <a href="{% url 'tweet-create' %}" class="alert-link">Create your first post!</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

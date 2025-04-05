@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Clone - {% block title %}{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+
+        body {
+            background-color: #f9f7f4;
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+
+        .content-section {
+            background: #ffffff;
+            padding: 25px;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .tweet-container {
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tweet-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .profile-info {
+            padding: 25px;
+        }
+
+        .btn-twitter {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-twitter:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .tweet-actions a {
+            color: #657786;
+            text-decoration: none;
+            margin-right: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .tweet-actions a:hover {
+            color: #1e3c72;
+            transform: scale(1.1);
+        }
+
+        .liked {
+            color: #e74c3c !important;
+        }
+
+        .retweeted {
+            color: #27ae60 !important;
+        }
+
+        /* Premium Badge */
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <i class="fas fa-feather-alt"></i> Prestige <span style="font-weight: 300; font-size: 0.9em;">Social</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'explore' %}">
+                                <i class="fas fa-compass"></i> Discover
+                            </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'insights' %}">
+                                <i class="fas fa-chart-line"></i> Insights
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-gem"></i> Premium
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    <form class="d-flex me-3" action="{% url 'search' %}" method="GET">
+                        <div class="position-relative">
+                            <input class="form-control ps-4 rounded-pill" style="min-width: 250px;" type="search" name="q" placeholder="Search for connections..." aria-label="Search">
+                            <i class="fas fa-search position-absolute" style="left: 12px; top: 12px; color: #aaa;"></i>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                                    <li><h6 class="dropdown-header">Notifications</h6></li>
+                                    <li><a class="dropdown-item" href="#">New connection request</a></li>
+                                    <li><a class="dropdown-item" href="#">Your post was liked</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">View all notifications</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'profile' %}">
+                                    <i class="fas fa-user"></i> Profile <span class="premium-badge">Elite</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-twitter ms-2" href="{% url 'register' %}">
+                                    <i class="fas fa-user-plus"></i> Join Now
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+            <div class="col-md-4">
+                {% if user.is_authenticated %}
+                <div class="content-section mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="mb-0">Create</h3>
+                        <span class="premium-badge">Elite</span>
+                    </div>
+                    <a href="{% url 'tweet-create' %}" class="btn btn-twitter w-100 mb-3">
+                        <i class="fas fa-feather-alt me-2"></i> New Post
+                    </a>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{% url 'tweet-create' %}" class="btn btn-outline-secondary flex-grow-1 me-2">
+                            <i class="fas fa-image"></i> Media
+                        </a>
+                        <a href="{% url 'create-poll' %}" class="btn btn-outline-secondary flex-grow-1 me-2">
+                            <i class="fas fa-poll"></i> Poll
+                        </a>
+                        <a href="{% url 'create-event' %}" class="btn btn-outline-secondary flex-grow-1">
+                            <i class="fas fa-calendar-alt"></i> Event
+                        </a>
+                    </div>
+                </div>
+
+                <div class="content-section mb-4">
+                    <h3>Premium Analytics</h3>
+                    <div class="card border-0 bg-light mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Engagement Rate</h5>
+                            <h2 class="card-text text-primary">24.8%</h2>
+                            <p class="card-text text-success"><i class="fas fa-arrow-up"></i> 3.2% from last week</p>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <a href="#" class="btn btn-outline-primary">View Full Analytics</a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="content-section">
+                    <h3>Trending Topics</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 ps-0 pe-0">
+                            <a href="#" class="text-decoration-none">
+                                <small class="text-muted">Business</small>
+                                <p class="mb-0 fw-bold">#InvestmentStrategies</p>
+                                <small>4,128 posts</small>
+                            </a>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 pe-0">
+                            <a href="#" class="text-decoration-none">
+                                <small class="text-muted">Lifestyle</small>
+                                <p class="mb-0 fw-bold">#LuxuryTravel</p>
+                                <small>2,845 posts</small>
+                            </a>
+                        </li>
+                        <li class="list-group-item border-0 ps-0 pe-0">
+                            <a href="#" class="text-decoration-none">
+                                <small class="text-muted">Technology</small>
+                                <p class="mb-0 fw-bold">#AIInnovation</p>
+                                <small>1,937 posts</small>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-grid mt-3">
+                        <a href="{% url 'explore' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-compass me-2"></i> Discover More
+                        </a>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                <div class="content-section">
+                    <h3>Suggested Connections</h3>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                        <div>
+                            <p class="mb-0 fw-bold">John Investor</p>
+                            <small class="text-muted">CEO at Venture Capital</small>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-twitter ms-auto">Connect</a>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                        <div>
+                            <p class="mb-0 fw-bold">Sarah Entrepreneur</p>
+                            <small class="text-muted">Founder at Tech Startup</small>
+                        </div>
+                        <a href="#" class="btn btn-sm btn-twitter ms-auto">Connect</a>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <a href="#" class="btn btn-outline-secondary">View All Suggestions</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS animations
+        $(document).ready(function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+
+            // Add hover effects to tweet actions
+            $('.tweet-actions a').hover(
+                function() {
+                    $(this).addClass('animate__animated animate__pulse');
+                },
+                function() {
+                    $(this).removeClass('animate__animated animate__pulse');
+                }
+            );
+
+            // Like button animation
+            $('.tweet-actions a:has(.fa-heart)').click(function(e) {
+                if (!$(this).hasClass('liked')) {
+                    $(this).find('i').removeClass('far').addClass('fas animate__animated animate__heartBeat');
+                    setTimeout(() => {
+                        $(this).find('i').removeClass('animate__animated animate__heartBeat');
+                    }, 1000);
+                } else {
+                    $(this).find('i').removeClass('fas').addClass('far');
+                }
+            });
+
+            // Premium badge shine effect
+            setInterval(() => {
+                $('.premium-badge').addClass('animate__animated animate__flash');
+                setTimeout(() => {
+                    $('.premium-badge').removeClass('animate__animated animate__flash');
+                }, 1000);
+            }, 5000);
+
+            // Smooth scroll to top
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 300) {
+                    $('#back-to-top').fadeIn();
+                } else {
+                    $('#back-to-top').fadeOut();
+                }
+            });
+
+            // Add back to top button
+            $('body').append('<a id="back-to-top" href="#" class="btn btn-twitter btn-lg position-fixed rounded-circle" style="bottom: 20px; right: 20px; display: none; width: 50px; height: 50px; padding: 10px; z-index: 1000;"><i class="fas fa-arrow-up"></i></a>');
+
+            $('#back-to-top').click(function(e) {
+                e.preventDefault();
+                $('html, body').animate({scrollTop: 0}, 800);
+            });
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Delete Tweet{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Delete Tweet</legend>
+                <h2>Are you sure you want to delete this tweet?</h2>
+                <div class="tweet-container mt-3">
+                    <div class="d-flex">
+                        <img src="{{ object.author.profile.profile_image.url }}" alt="{{ object.author.username }}" class="profile-img me-3">
+                        <div>
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0">{{ object.author.username }}</h5>
+                                <small class="text-muted ms-2">{{ object.date_posted|date:"F d, Y" }}</small>
+                            </div>
+                            <p>{{ object.content }}</p>
+                            {% if object.image %}
+                                <img src="{{ object.image.url }}" alt="Tweet image" class="img-fluid rounded mb-3" style="max-height: 200px;">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'tweet-detail' object.id %}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

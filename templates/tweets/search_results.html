@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+    <div class="content-section">
+        <h2>Search Results for "{{ query }}"</h2>
+        <div class="border-bottom mb-4"></div>
+
+        {% if users %}
+            <h3>Users</h3>
+            {% for user_obj in users %}
+                <div class="d-flex align-items-center mb-3">
+                    <img src="{{ user_obj.profile.profile_image.url }}" alt="{{ user_obj.username }}" class="profile-img me-3">
+                    <div>
+                        <h5 class="mb-0">
+                            <a href="{% url 'profile' username=user_obj.username %}" class="text-decoration-none">
+                                {{ user_obj.username }}
+                            </a>
+                        </h5>
+                        <p class="text-muted mb-0">{{ user_obj.profile.bio|truncatechars:50 }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="border-bottom my-4"></div>
+        {% endif %}
+
+        {% if results %}
+            <h3>Tweets</h3>
+            {% for tweet in results %}
+                <div class="tweet-container">
+                    <div class="d-flex">
+                        <img src="{{ tweet.author.profile.profile_image.url }}" alt="{{ tweet.author.username }}" class="profile-img me-3">
+                        <div class="w-100">
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0">
+                                    <a href="{% url 'profile' username=tweet.author.username %}" class="text-decoration-none">
+                                        {{ tweet.author.username }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted ms-2">{{ tweet.date_posted|date:"F d, Y" }}</small>
+                            </div>
+                            <p>{{ tweet.content }}</p>
+                            {% if tweet.image %}
+                                <img src="{{ tweet.image.url }}" alt="Tweet image" class="img-fluid rounded mb-3">
+                            {% endif %}
+                            <div class="tweet-actions">
+                                <a href="{% url 'tweet-like' tweet.id %}" class="{% if user in tweet.likes.all %}liked{% endif %}">
+                                    <i class="far fa-heart"></i> {{ tweet.likes.count }}
+                                </a>
+                                <a href="{% url 'retweet' tweet.id %}" class="">
+                                    <i class="fas fa-retweet"></i> {{ tweet.retweets.count }}
+                                </a>
+                                <a href="{% url 'tweet-detail' tweet.id %}">
+                                    <i class="far fa-comment"></i> {{ tweet.comments.count }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if not users and not results %}
+            <div class="alert alert-info">
+                No results found for "{{ query }}".
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

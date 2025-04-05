@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Explore{% endblock %}
+{% block content %}
+    <h3 class="mb-3">Explore</h3>
+    {% if tweets %}
+        {% for tweet in tweets %}
+            <div class="tweet-container">
+                {% if tweet.is_retweet %}
+                    <div class="mb-2 text-muted">
+                        <i class="fas fa-retweet"></i> {{ tweet.author.username }} retweeted
+                    </div>
+                    <div class="d-flex">
+                        <img src="{{ tweet.parent.author.profile.profile_image.url }}" alt="{{ tweet.parent.author.username }}" class="profile-img me-3">
+                        <div class="w-100">
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0">
+                                    <a href="{% url 'profile' username=tweet.parent.author.username %}" class="text-decoration-none">
+                                        {{ tweet.parent.author.username }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted ms-2">{{ tweet.parent.date_posted|date:"F d, Y" }}</small>
+                            </div>
+                            <p>{{ tweet.parent.content }}</p>
+                            {% if tweet.parent.image %}
+                                <img src="{{ tweet.parent.image.url }}" alt="Tweet image" class="img-fluid rounded mb-3">
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="d-flex">
+                        <img src="{{ tweet.author.profile.profile_image.url }}" alt="{{ tweet.author.username }}" class="profile-img me-3">
+                        <div class="w-100">
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0">
+                                    <a href="{% url 'profile' username=tweet.author.username %}" class="text-decoration-none">
+                                        {{ tweet.author.username }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted ms-2">{{ tweet.date_posted|date:"F d, Y" }}</small>
+                            </div>
+                            <p>{{ tweet.content }}</p>
+                            {% if tweet.image %}
+                                <img src="{{ tweet.image.url }}" alt="Tweet image" class="img-fluid rounded mb-3">
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="tweet-actions mt-2">
+                    <a href="{% url 'tweet-like' tweet.id %}" class="{% if user in tweet.likes.all %}liked{% endif %}">
+                        <i class="far fa-heart"></i> {{ tweet.likes.count }}
+                    </a>
+                    <a href="{% url 'retweet' tweet.id %}" class="">
+                        <i class="fas fa-retweet"></i> {{ tweet.retweets.count }}
+                    </a>
+                    <a href="{% url 'tweet-detail' tweet.id %}">
+                        <i class="far fa-comment"></i> {{ tweet.comments.count }}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info">No tweets available.</div>
+    {% endif %}
+{% endblock content %}
