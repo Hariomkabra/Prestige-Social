@@ -25,7 +25,7 @@ import os
 from pathlib import Path
 
 # Use environment variable for SECRET_KEY in production, fallback for development
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-!o3s%e5rejuq7g+v+l4t*-&)(3z5f^u^z)78burtim*-e0a6)#')
+SECRET_KEY = os.environ.get('4320142a9dbbf8792bf66c9ea4b3d380', 'django-insecure-!o3s%e5rejuq7g+v+l4t*-&)(3z5f^u^z)78burtim*-e0a6)#')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
