@@ -8,5 +8,4 @@ whitenoise>=6.5.0,<7.0.0
 gunicorn>=21.0.0,<22.0.0
 dj-database-url>=2.0.0,<3.0.0
 psycopg2-binary>=2.9.0,<3.0.0
-python>=3.11.7
-firebase-admin>=6.0.0,<7.0.0 
+firebase-admin>=6.0.0,<7.0.0
