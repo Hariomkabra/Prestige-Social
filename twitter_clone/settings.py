@@ -25,15 +25,12 @@ import os
 from pathlib import Path
 
 # Use environment variable for SECRET_KEY in production, fallback for development
-SECRET_KEY = os.environ.get('4320142a9dbbf8792bf66c9ea4b3d380', 'django-insecure-!o3s%e5rejuq7g+v+l4t*-&)(3z5f^u^z)78burtim*-e0a6)#')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-!o3s%e5rejuq7g+v+l4t*-&)(3z5f^u^z)78burtim*-e0a6)#')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
-
 
 
 # Application definition
@@ -171,6 +168,3 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-
