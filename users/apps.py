@@ -7,3 +7,6 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         import users.signals
+        # Create default profile images on startup
+        from users.signals import ensure_default_images
+        ensure_default_images()

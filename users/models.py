@@ -8,8 +8,8 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    profile_image = models.ImageField(default='default.jpg', upload_to='profile_pics')
-    cover_image = models.ImageField(default='default_cover.jpg', upload_to='cover_pics')
+    profile_image = models.ImageField(default='default_profiles/default.jpg', upload_to='profile_pics')
+    cover_image = models.ImageField(default='default_profiles/default_cover.jpg', upload_to='cover_pics')
     followers = models.ManyToManyField(User, related_name='following', blank=True)
 
     def __str__(self):

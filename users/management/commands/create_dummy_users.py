@@ -1,9 +1,14 @@
 import os
 import random
+import requests
+import tempfile
+from io import BytesIO
+from PIL import Image
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+from django.core.files import File
 from users.models import Profile
 from tweets.models import Tweet, Comment
 from faker import Faker
@@ -79,6 +84,58 @@ class Command(BaseCommand):
             profile.bio = bio
             profile.location = location
             profile.website = fake.url()
+
+            # Download a realistic profile picture
+            gender = 'male' if random.random() < 0.5 else 'female'
+            try:
+                # Use randomuser.me API to get realistic profile pictures
+                response = requests.get(f'https://randomuser.me/api/?gender={gender}')
+                if response.status_code == 200:
+                    data = response.json()
+                    if data and 'results' in data and len(data['results']) > 0:
+                        picture_url = data['results'][0]['picture']['large']
+
+                        # Download the image
+                        img_response = requests.get(picture_url)
+                        if img_response.status_code == 200:
+                            # Save the image to a temporary file
+                            img_temp = BytesIO(img_response.content)
+                            img_temp.seek(0)
+
+                            # Generate a filename
+                            filename = f"profile_{user.username}.jpg"
+
+                            # Save to profile
+                            profile.profile_image.save(filename, File(img_temp), save=False)
+
+                            self.stdout.write(f"Downloaded profile picture for {user.username}")
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Error downloading profile picture: {e}"))
+
+            # Download a cover image (using unsplash for random beautiful images)
+            try:
+                cover_categories = ['business', 'office', 'city', 'technology', 'luxury']
+                category = random.choice(cover_categories)
+                cover_url = f"https://source.unsplash.com/1200x400/?{category}"
+
+                # Download the image
+                cover_response = requests.get(cover_url)
+                if cover_response.status_code == 200:
+                    # Save the image to a temporary file
+                    cover_temp = BytesIO(cover_response.content)
+                    cover_temp.seek(0)
+
+                    # Generate a filename
+                    cover_filename = f"cover_{user.username}.jpg"
+
+                    # Save to profile
+                    profile.cover_image.save(cover_filename, File(cover_temp), save=False)
+
+                    self.stdout.write(f"Downloaded cover image for {user.username}")
+            except Exception as e:
+                self.stdout.write(self.style.WARNING(f"Error downloading cover image: {e}"))
+
+            # Save the profile with the new images
             profile.save()
 
             users.append(user)

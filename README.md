@@ -79,21 +79,53 @@ A high-end social media platform built with Django, designed for affluent users 
 
 ## Deployment
 
-This application is ready for deployment on platforms like Heroku, PythonAnywhere, or any other Django-compatible hosting service.
+### Deploying to Render
+
+This application is configured for easy deployment on Render using the included `render.yaml` file.
+
+1. Fork or clone this repository to your GitHub account.
+
+2. Sign up for a [Render account](https://render.com/) if you don't have one.
+
+3. In the Render dashboard, click on the "New +" button and select "Blueprint".
+
+4. Connect your GitHub account and select the repository.
+
+5. Render will automatically detect the `render.yaml` file and set up the services.
+
+6. Click "Apply" to start the deployment process.
+
+7. Once deployed, you can access your application at the URL provided by Render.
+
+### Manual Deployment
+
+You can also deploy this application manually on any Django-compatible hosting service:
 
 1. Set the following environment variables:
    - `SECRET_KEY`: Your Django secret key
    - `DEBUG`: Set to False in production
    - `ALLOWED_HOSTS`: Your domain names
+   - `DATABASE_URL`: Your database connection string (if using PostgreSQL)
 
-2. Configure your database settings in settings.py for production.
-
-3. Collect static files:
+2. Collect static files:
    ```
    python manage.py collectstatic
    ```
 
-4. Follow your hosting provider's specific deployment instructions.
+3. Run migrations:
+   ```
+   python manage.py migrate
+   ```
+
+4. Create a superuser:
+   ```
+   python manage.py createsuperuser
+   ```
+
+5. Start the application using gunicorn:
+   ```
+   gunicorn twitter_clone.wsgi:application
+   ```
 
 ## Demo Accounts
 
